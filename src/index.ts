@@ -1,21 +1,22 @@
 import { Hono } from 'hono';
-import { drizzle } from 'drizzle-orm/d1';
+import { errorHandler } from 'hono-error-handler';
+import { connectD1 } from './middleware';
 
-type Bindings = {
-  DB: D1Database;
-};
+const app = new Hono();
 
-const app = new Hono<{ Bindings: Bindings }>();
-
-app.use(async (c, next) => {
-  const db = drizzle(c.env.DB);
-  c.set('db', db);
-
-  await next();
-});
+app.use(connectD1);
 
 app.get('/', (c) => {
   return c.text('Hello Hono!');
 });
+
+app.onError(
+  errorHandler([], (error, c) => {
+    return c.json({
+      success: false,
+      error: error.message,
+    });
+  })
+);
 
 export default app;
