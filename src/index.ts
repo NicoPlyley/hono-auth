@@ -3,6 +3,7 @@ import { errorHandler } from 'hono-error-handler';
 import { connectD1 } from './middleware';
 import { StatusCode } from 'hono/utils/http-status';
 import errorHandlers from './errors';
+import { auth } from './routes';
 
 const app = new Hono();
 
@@ -11,6 +12,8 @@ app.use(connectD1);
 app.get('/', (c) => {
   return c.text('Hello Hono!');
 });
+
+app.route('/auth', auth);
 
 app.onError(
   errorHandler(errorHandlers, (err, c) => {
