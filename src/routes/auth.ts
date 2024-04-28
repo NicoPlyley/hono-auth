@@ -9,6 +9,9 @@ type Bindings = {
 
 const auth = new Hono<{ Bindings: Bindings }>();
 
+// @desc   Login
+// @route  POST /auth/login
+// @method Public
 auth.post('/login', validate(loginModel), async (c) => {
   let data = await c.req.json();
   const db = c.get('db');
@@ -21,6 +24,9 @@ auth.post('/login', validate(loginModel), async (c) => {
   });
 });
 
+// @desc   Create account
+// @route  POST /auth/register
+// @method Public
 auth.post('/register', validate(userModel), async (c) => {
   const data = await c.req.json();
   const db = c.get('db');
@@ -36,6 +42,9 @@ auth.post('/register', validate(userModel), async (c) => {
   );
 });
 
+// @desc   Get current user
+// @route  POST /auth/me
+// @method Private
 auth.get('/me', protect, (c) => {
   const user = c.get('user');
   return c.json({
