@@ -1,8 +1,7 @@
 import { Hono } from 'hono';
 import * as User from '../services/user';
-import { zValidator } from '@hono/zod-validator';
 import { loginModel, userModel } from '../models';
-import { protect } from '../middleware';
+import { protect, validate } from '../middleware';
 
 type Bindings = {
   JWT_SECRET: string;
@@ -10,7 +9,7 @@ type Bindings = {
 
 const auth = new Hono<{ Bindings: Bindings }>();
 
-auth.post('/login', zValidator('json', loginModel), async (c) => {
+auth.post('/login', validate(loginModel), async (c) => {
   let data = await c.req.json();
   const db = c.get('db');
 
@@ -22,7 +21,7 @@ auth.post('/login', zValidator('json', loginModel), async (c) => {
   });
 });
 
-auth.post('/register', zValidator('json', userModel), async (c) => {
+auth.post('/register', validate(userModel), async (c) => {
   const data = await c.req.json();
   const db = c.get('db');
 
