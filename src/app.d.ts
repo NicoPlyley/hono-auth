@@ -6,4 +6,18 @@ declare module 'hono' {
   }
 }
 
+declare global {
+  interface Login {
+    username: string;
+    password: string;
+  }
+
+  interface User {
+    id?: number;
+    name: string;
+    username: string;
+    password: string;
+  }
+}
+
 export {};
