@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import * as User from '../services/user';
 import { zValidator } from '@hono/zod-validator';
 import { loginModel, userModel } from '../models';
+import { protect } from '../middleware';
 
 type Bindings = {
   JWT_SECRET: string;
@@ -34,6 +35,14 @@ auth.post('/register', zValidator('json', userModel), async (c) => {
     },
     201
   );
+});
+
+auth.get('/me', protect, (c) => {
+  const user = c.get('user');
+  return c.json({
+    success: true,
+    data: user,
+  });
 });
 
 export default auth;
