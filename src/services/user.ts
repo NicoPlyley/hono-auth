@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import * as jose from 'jose';
 
+// Private methods
 const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
@@ -31,6 +32,20 @@ const generateToken = async (id: number, jwtSecret: string) => {
     .sign(secret);
 };
 
+const findUserById = async (db: DrizzleD1Database, id: number) => {
+  const user = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+    })
+    .from(users)
+    .where(eq(users.id, id));
+
+  return user[0];
+};
+
+// Public Methods
 export const login = async (
   db: DrizzleD1Database,
   data: Login,
@@ -76,3 +91,6 @@ export const create = async (db: DrizzleD1Database, data: User) => {
 
   return newUser[0];
 };
+
+export const getMe = async (db: DrizzleD1Database, id: number) =>
+  findUserById(db, id);
